@@ -44,7 +44,7 @@ const female_male_paths_without_lombardy_positives_symptomatics = [path for path
 const female_male_paths = [path for path in input_paths if (occursin("male", path) || occursin("female", path)) ][1:5] #(!occursin("sintomatici", path) && !occursin("positivi",path)) && && !occursin("italy",path) 
 const lombardy_paths = [path for path in input_paths if (occursin("male", path) || occursin("female", path)) && occursin("lombardy",path) ]
 #const lombardy_positive_symptomatics_paths = reverse([path for path in input_paths if !occursin("maschi", path) && !occursin("femmine", path) && occursin("lombardia",path) && (occursin("positivi",path) || occursin("sintomatici",path))])
-const total_female_male_paths = length(female_male_paths_without_lombardy_positives_symptomatics)
+const total_female_male_paths = length(lombardy_paths)
 
 # Store the paths pointing to the csv that were not able to be reduced to a single time series. These will be later attempted to be recovered from the sex-aggregated time series. Since we use multithreading, we instantiate failed_paths_multithread as suggested in https://stackoverflow.com/a/65715547/13110508
 ## So far, the ones that use to fail are
@@ -59,8 +59,8 @@ failed_paths_multithread = [String[] for i in 1:Threads.nthreads()]
 
 # Multithreaded loop
 # Loop over all sex-disaggregayed paths except the nationals
-Threads.@threads for i in eachindex(female_male_paths_without_lombardy_positives_symptomatics)
-    input_path = female_male_paths_without_lombardy_positives_symptomatics[i]
+Threads.@threads for i in eachindex(lombardy_paths)
+    input_path = lombardy_paths[i]
     output_name =  string(split(input_path, os_separator)[end])
     println("\nUnrolling $output_name ( $i \\ $total_female_male_paths) ...")
 
@@ -96,8 +96,8 @@ const failed_paths = vcat(failed_paths_multithread...)
 
 
 
-## Attempt unrollign of sex-aggregated time series for the datasets that couldn't be brought back to a single time series
-### Aggregate paths by sex
+# # Attempt unrollign of sex-aggregated time series for the datasets that couldn't be brought back to a single time series
+# ## Aggregate paths by sex
 # sex_aggregated_paths = unique([multiple_string_replace(failed_path, ("_male" => "", "_female" => "")) for failed_path  in failed_paths])
 # ## Compute total sex-aggregated paths to be unrolled
 # const total_sex_aggregated_paths = length(sex_aggregated_paths)
@@ -111,7 +111,7 @@ const failed_paths = vcat(failed_paths_multithread...)
 #     horizontal_check_cases::Union{Nothing,Vector{Int64}} = nothing
 #     try
         
-#         horizontal_check_cases = CSV.read( joinpath(region_incidences_dir, get_aggregated_dataframe_name_from_unaggragated_dataframe(output_name)), DataFrame)[!,"casi"][(1+skip_lines):end]
+#         horizontal_check_cases = CSV.read( joinpath(region_incidences_dir, get_aggregated_dataframe_name_from_unaggragated_dataframe(output_name)), DataFrame)[!,"incidence"][(1+skip_lines):end]
 
 #         println("Horizontal check series found")
 #     catch e
@@ -121,7 +121,7 @@ const failed_paths = vcat(failed_paths_multithread...)
 #     sex_aggregated_dataframe = CSV.read(sex_aggregated_path,DataFrame)
 #     reconstructed_df::DataFrame = DataFrame()
 #     try
-#         reconstructed_df = unroll_iss_infn_csv(sex_aggregated_dataframe, n₋, n₊,horizontal_check_cases)
+#         reconstructed_df = unroll_iss_infn(sex_aggregated_dataframe, n₋, n₊,horizontal_check_cases)
 #         save_dataframe_to_csv(reconstructed_df,output_files_dir_path,output_name)
 #     catch e
 #         if isa(e, ErrorException)
