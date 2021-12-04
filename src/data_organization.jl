@@ -2,6 +2,7 @@
 cd("src")
 using Pkg
 Pkg.activate(".")
+Pkg.instantiate()
 cd("..")
 
 using DataFrames
