@@ -24,8 +24,7 @@ jobs:
           
       - name: execute py script 
         run: |
-          cd src
-          python script.py
+          python src/script.py
           
       - name: commit files
         run: |
