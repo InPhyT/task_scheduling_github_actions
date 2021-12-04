@@ -136,7 +136,7 @@ const failed_paths = vcat(failed_paths_multithread...)
 
 
 # Paths to outputted .csvs with OS-specific file separators
-const output_paths = [replace(path, "/" => os_separator) for path in readdir(output_files_dir_path; join = true)]
+const output_paths = [replace(path, "/" => os_separator) for path in readdir(output_files_dir_path; join = true) if !occursin(".gitkeep",path)]
 
 
 ## Plot each unrolled csv toghether with averaged data
