@@ -96,43 +96,43 @@ const failed_paths = vcat(failed_paths_multithread...)
 
 
 
-# Attempt unrollign of sex-aggregated time series for the datasets that couldn't be brought back to a single time series
-## Aggregate paths by sex
-sex_aggregated_paths = unique([multiple_string_replace(failed_path, ("_male" => "", "_female" => "")) for failed_path  in failed_paths])
-## Compute total sex-aggregated paths to be unrolled
-const total_sex_aggregated_paths = length(sex_aggregated_paths)
-## Loop over the sex aggregated paths
-Threads.@threads for i in eachindex(sex_aggregated_paths)
-    sex_aggregated_path = sex_aggregated_paths[i]
-    # Name to be given to the output file
-    output_name =  string(split(sex_aggregated_path, os_separator)[end])
-    println("\nUnrolling $output_name ( $i \\ $total_sex_aggregated_paths) ...")
-    # Load horizontal chack (if it exists)
-    horizontal_check_cases::Union{Nothing,Vector{Int64}} = nothing
-    try
+## Attempt unrollign of sex-aggregated time series for the datasets that couldn't be brought back to a single time series
+### Aggregate paths by sex
+# sex_aggregated_paths = unique([multiple_string_replace(failed_path, ("_male" => "", "_female" => "")) for failed_path  in failed_paths])
+# ## Compute total sex-aggregated paths to be unrolled
+# const total_sex_aggregated_paths = length(sex_aggregated_paths)
+# ## Loop over the sex aggregated paths
+# Threads.@threads for i in eachindex(sex_aggregated_paths)
+#     sex_aggregated_path = sex_aggregated_paths[i]
+#     # Name to be given to the output file
+#     output_name =  string(split(sex_aggregated_path, os_separator)[end])
+#     println("\nUnrolling $output_name ( $i \\ $total_sex_aggregated_paths) ...")
+#     # Load horizontal chack (if it exists)
+#     horizontal_check_cases::Union{Nothing,Vector{Int64}} = nothing
+#     try
         
-        horizontal_check_cases = CSV.read( joinpath(region_incidences_dir, get_aggregated_dataframe_name_from_unaggragated_dataframe(output_name)), DataFrame)[!,"casi"][(1+skip_lines):end]
+#         horizontal_check_cases = CSV.read( joinpath(region_incidences_dir, get_aggregated_dataframe_name_from_unaggragated_dataframe(output_name)), DataFrame)[!,"casi"][(1+skip_lines):end]
 
-        println("Horizontal check series found")
-    catch e
-        println("Horizontal check series NOT found")
-    end
-    # Reconstruct the time series, optionally making use of the total cases check
-    sex_aggregated_dataframe = CSV.read(sex_aggregated_path,DataFrame)
-    reconstructed_df::DataFrame = DataFrame()
-    try
-        reconstructed_df = unroll_iss_infn_csv(sex_aggregated_dataframe, n₋, n₊,horizontal_check_cases)
-        save_dataframe_to_csv(reconstructed_df,output_files_dir_path,output_name)
-    catch e
-        if isa(e, ErrorException)
-            println(e.msg)
-            continue
-        else
-            throw(e)
-        end
-        continue
-    end
-end
+#         println("Horizontal check series found")
+#     catch e
+#         println("Horizontal check series NOT found")
+#     end
+#     # Reconstruct the time series, optionally making use of the total cases check
+#     sex_aggregated_dataframe = CSV.read(sex_aggregated_path,DataFrame)
+#     reconstructed_df::DataFrame = DataFrame()
+#     try
+#         reconstructed_df = unroll_iss_infn_csv(sex_aggregated_dataframe, n₋, n₊,horizontal_check_cases)
+#         save_dataframe_to_csv(reconstructed_df,output_files_dir_path,output_name)
+#     catch e
+#         if isa(e, ErrorException)
+#             println(e.msg)
+#             continue
+#         else
+#             throw(e)
+#         end
+#         continue
+#     end
+# end
 
 
 # Paths to outputted .csvs with OS-specific file separators
