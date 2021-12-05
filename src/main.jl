@@ -1,8 +1,8 @@
 # Activate Julia environment then return to root folder
-cd("src")
-using Pkg
-Pkg.activate(".")
-cd("..")
+# cd("src")
+# using Pkg
+# Pkg.activate(".")
+# cd("..")
 
 # Imports
 using Dates
@@ -44,7 +44,7 @@ const female_male_paths_without_lombardy_positives_symptomatics = [path for path
 const female_male_paths = [path for path in input_paths if (occursin("male", path) || occursin("female", path)) ] #(!occursin("sintomatici", path) && !occursin("positivi",path)) && && !occursin("italy",path) 
 const lombardy_paths = [path for path in input_paths if (occursin("male", path) || occursin("female", path)) && occursin("lombardy",path) ]
 #const lombardy_positive_symptomatics_paths = reverse([path for path in input_paths if !occursin("maschi", path) && !occursin("femmine", path) && occursin("lombardia",path) && (occursin("positivi",path) || occursin("sintomatici",path))])
-const total_female_male_paths = length(lombardy_paths)
+const total_female_male_paths = length(female_male_paths_without_lombardy_positives_symptomatics)
 
 # Store the paths pointing to the csv that were not able to be reduced to a single time series. These will be later attempted to be recovered from the sex-aggregated time series. Since we use multithreading, we instantiate failed_paths_multithread as suggested in https://stackoverflow.com/a/65715547/13110508
 ## So far, the ones that use to fail are
@@ -59,8 +59,8 @@ failed_paths_multithread = [String[] for i in 1:Threads.nthreads()]
 
 # Multithreaded loop
 # Loop over all sex-disaggregayed paths except the nationals
-Threads.@threads for i in eachindex(lombardy_paths)
-    input_path = lombardy_paths[i]
+Threads.@threads for i in eachindex(female_male_paths_without_lombardy_positives_symptomatics)
+    input_path = female_male_paths_without_lombardy_positives_symptomatics[i]
     output_name =  string(split(input_path, os_separator)[end])
     println("\nUnrolling $output_name ( $i \\ $total_female_male_paths) ...")
 

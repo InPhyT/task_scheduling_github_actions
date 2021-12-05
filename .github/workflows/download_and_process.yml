@@ -30,14 +30,14 @@ jobs:
         run: |
           python src/script.py
 
-
+      # julia --project=@. -e "using Pkg; Pkg.instantiate();"
       - name: "Set up Julia"
         uses: julia-actions/setup-julia@v1.6.0
         with:
           version: "1.6.4"
       - name: "processing"
         run: |
-          julia --project=@. -e "using Pkg; Pkg.instantiate();"
+          julia --project=./src -e "using Pkg; Pkg.instantiate();"  
           julia src/data_organization.jl
           julia src/main.jl
           
@@ -63,7 +63,7 @@ jobs:
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         with:
-          fallback: 1.0.0 # Optional fallback tag to use when no tag can be found
+          fallback: v1.0.0 # Optional fallback tag to use when no tag can be found
       - name: 'Get next major version'
         id: semvers
         uses: "WyriHaximus/github-action-next-semvers@v1"
@@ -72,5 +72,5 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.previoustag.outputs.major }}
+          tag_name: ${{ steps.previoustag.outputs.v_major }}
           body: "Data updated as of ${{ steps.date.outputs.date }}"

@@ -1,9 +1,9 @@
 # This script assumes you have an /archive top folder, and that the file resulting from downloading https://covid19.infn.it/iss/csv_part/iss.tar.gz has been extracted there. This folder won't be pushed, since "/archive" is in the .gitignore
-cd("src")
-using Pkg
-Pkg.activate(".")
-Pkg.instantiate()
-cd("..")
+# cd("src")
+# using Pkg
+# Pkg.activate(".")
+# Pkg.instantiate()
+# cd("..")
 
 using DataFrames
 using CSV
