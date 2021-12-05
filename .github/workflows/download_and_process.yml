@@ -40,13 +40,14 @@ jobs:
           julia src/data_organization.jl
           julia src/main.jl
           
+      # cd ..
       - name: commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
           git commit -m "update data" -a
-          cd ..
+          
           
       - name: push changes
         uses: ad-m/github-push-action@v0.6.0
@@ -68,8 +69,13 @@ jobs:
         uses: "WyriHaximus/github-action-next-semvers@v1"
         with:
           version: ${{ steps.previoustag.outputs.tag }}
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.previoustag.outputs.v_major }}
-          body: "Data updated as of ${{ steps.date.outputs.date }}"
+      # - name: Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     tag_name: ${{ steps.previoustag.outputs.v_major }}
+      #     body: "Data updated as of ${{ steps.date.outputs.date }}"
+      - uses: ncipollo/release-action@v1
+      with:
+        body: "Data updated as of ${{ steps.date.outputs.date }}"
+        tag: ${{ steps.previoustag.outputs.v_major }}
+        token: ${{ secrets.GITHUB_TOKEN }}
