@@ -12,6 +12,8 @@ jobs:
 
       - name: checkout repo content
         uses: actions/checkout@v2 # checkout the repository content to github runner
+        with:
+          fetch-depth: 0 # Required due to the weg Git works, without it this action won't be able to find any or the correct tags
 
       - name: setup python
         uses: actions/setup-python@v2
@@ -52,3 +54,23 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main  
+
+      # Get previous release's tag, increment its major version and use it to make a new release. New release has date and time in its body.
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          fallback: 1.0.0 # Optional fallback tag to use when no tag can be found
+      - name: 'Get next major version'
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.previoustag.outputs.major }}
+          body: "Data updated as of ${{ steps.date.outputs.date }}"
