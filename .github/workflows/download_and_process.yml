@@ -47,7 +47,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add -A
           git commit -m "update data" -a
-          
+
           
           
       - name: push changes
@@ -75,8 +75,10 @@ jobs:
       #   with:
       #     tag_name: ${{ steps.previoustag.outputs.v_major }}
       #     body: "Data updated as of ${{ steps.date.outputs.date }}"
-      - uses: ncipollo/release-action@v1
-      with:
-        body: "Data updated as of ${{ steps.date.outputs.date }}"
-        tag: ${{ steps.previoustag.outputs.v_major }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        id: release 
+        uses: ncipollo/release-action@v1
+        with:
+          body: "Data updated as of ${{ steps.date.outputs.date }}"
+          tag: ${{ steps.previoustag.outputs.v_major }}
+          token: ${{ secrets.GITHUB_TOKEN }}
