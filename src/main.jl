@@ -1,8 +1,8 @@
 # Activate Julia environment then return to root folder
-# cd("src")
-# using Pkg
-# Pkg.activate(".")
-# cd("..")
+cd("src")
+using Pkg
+Pkg.activate(".")
+cd("..")
 
 # Imports
 using Dates
