@@ -80,5 +80,5 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           body: "Data updated as of ${{ steps.date.outputs.date }}"
-          tag: ${{ steps.previoustag.outputs.v_major }}
+          tag: ${{ steps.semvers.outputs.v_major }}
           token: ${{ secrets.GITHUB_TOKEN }}
