@@ -30,14 +30,14 @@ jobs:
         run: |
           python src/script.py
 
-      # julia --project=@. -e "using Pkg; Pkg.instantiate();"
+      # julia --project=./src -e "using Pkg; Pkg.instantiate();"  
       - name: "Set up Julia"
         uses: julia-actions/setup-julia@v1.6.0
         with:
           version: "1.6.4"
       - name: "processing"
         run: |
-          julia --project=./src -e "using Pkg; Pkg.instantiate();"  
+          julia --project=@. -e "using Pkg; Pkg.instantiate();"
           julia src/data_organization.jl
           julia src/main.jl
           
