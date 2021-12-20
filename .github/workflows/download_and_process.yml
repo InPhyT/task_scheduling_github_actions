@@ -1,6 +1,6 @@
 # This workflow file is responsile for downloading the .tar.gzip file from https://covid19.infn.it/, running the scripts that decompress and process it, committing the results and creating a release.
 # For more information about workflows, see the GitHub documentation: https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions
-
+# commit
 # Name of this workflow
 name: download and process
 
